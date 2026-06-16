@@ -1,0 +1,277 @@
+{
+  "packages": [
+    {
+      "name": "moment",
+      "sizeKB": 232,
+      "ttImpactMs": 180,
+      "alternatives": [
+        { "name": "dayjs", "sizeKB": 2, "description": "Minimal 2KB date library, same API" },
+        { "name": "date-fns", "sizeKB": 12, "description": "Modular, tree-shakeable date utils" }
+      ],
+      "reason": "Moment.js is very large and no longer maintained. Consider a lightweight alternative."
+    },
+    {
+      "name": "lodash",
+      "sizeKB": 71,
+      "ttImpactMs": 55,
+      "alternatives": [
+        { "name": "lodash-es", "sizeKB": 15, "description": "ESM version, fully tree-shakeable" },
+        { "name": "radash", "sizeKB": 3, "description": "Modern lodash alternative" }
+      ],
+      "reason": "Import only specific functions (e.g. import get from 'lodash/get') or use native JS methods."
+    },
+    {
+      "name": "axios",
+      "sizeKB": 13,
+      "ttImpactMs": 10,
+      "alternatives": [
+        { "name": "ky", "sizeKB": 3, "description": "Tiny fetch-based HTTP client" },
+        { "name": "redaxios", "sizeKB": 0.8, "description": "Axios API over fetch, <1KB" }
+      ],
+      "reason": "Native fetch is available in Node 18+ and modern browsers. Consider if axios is truly needed."
+    },
+    {
+      "name": "jquery",
+      "sizeKB": 87,
+      "ttImpactMs": 68,
+      "alternatives": [
+        { "name": "cash-dom", "sizeKB": 5, "description": "jQuery-compatible modern alternative" }
+      ],
+      "reason": "jQuery is unnecessary in modern React/Next.js projects. Use native DOM APIs."
+    },
+    {
+      "name": "bootstrap",
+      "sizeKB": 152,
+      "ttImpactMs": 120,
+      "alternatives": [
+        { "name": "daisyui", "sizeKB": 40, "description": "Tailwind-based component library" }
+      ],
+      "reason": "In Next.js projects, CSS Modules or Tailwind are more performant and tree-shakeable."
+    },
+    {
+      "name": "react-bootstrap",
+      "sizeKB": 130,
+      "ttImpactMs": 100,
+      "alternatives": [
+        { "name": "@headlessui/react", "sizeKB": 12, "description": "Unstyled, accessible components" },
+        { "name": "shadcn-ui", "sizeKB": 0, "description": "Copy-paste component library, zero dependency" }
+      ],
+      "reason": "Heavy component library. Consider unstyled alternatives with Tailwind CSS."
+    },
+    {
+      "name": "material-ui",
+      "sizeKB": 331,
+      "ttImpactMs": 260,
+      "alternatives": [
+        { "name": "@radix-ui/react-*", "sizeKB": 5, "description": "Primitives only what you need" }
+      ],
+      "reason": "MUI is very large. Import only the specific components you need."
+    },
+    {
+      "name": "@mui/material",
+      "sizeKB": 331,
+      "ttImpactMs": 260,
+      "alternatives": [
+        { "name": "@radix-ui/react-*", "sizeKB": 5, "description": "Primitives only what you need" }
+      ],
+      "reason": "MUI is very large. Import only the specific components you need, or use Radix UI primitives."
+    },
+    {
+      "name": "antd",
+      "sizeKB": 450,
+      "ttImpactMs": 350,
+      "alternatives": [
+        { "name": "shadcn-ui", "sizeKB": 0, "description": "Zero-dependency copy-paste components" }
+      ],
+      "reason": "Ant Design is extremely large. Use tree-shaking or consider a lighter UI library."
+    },
+    {
+      "name": "redux",
+      "sizeKB": 3,
+      "ttImpactMs": 2,
+      "alternatives": [
+        { "name": "zustand", "sizeKB": 1, "description": "Minimal state management, React-first" },
+        { "name": "jotai", "sizeKB": 2, "description": "Atomic state management" }
+      ],
+      "reason": "Redux itself is small but @reduxjs/toolkit adds significant overhead. Check if simpler state management suffices."
+    },
+    {
+      "name": "@reduxjs/toolkit",
+      "sizeKB": 85,
+      "ttImpactMs": 66,
+      "alternatives": [
+        { "name": "zustand", "sizeKB": 1, "description": "Minimal state management, React-first" },
+        { "name": "jotai", "sizeKB": 2, "description": "Atomic state management" }
+      ],
+      "reason": "Redux Toolkit is heavy. If your state needs are simple, consider Zustand or React Context."
+    },
+    {
+      "name": "chart.js",
+      "sizeKB": 160,
+      "ttImpactMs": 125,
+      "alternatives": [
+        { "name": "recharts", "sizeKB": 60, "description": "React-native charting library" },
+        { "name": "victory", "sizeKB": 55, "description": "Composable React charts" }
+      ],
+      "reason": "Chart.js is large. For React/Next.js, consider react-chartjs-2 or a React-native library."
+    },
+    {
+      "name": "three",
+      "sizeKB": 582,
+      "ttImpactMs": 450,
+      "alternatives": [],
+      "reason": "Three.js is very large. Use dynamic import with next/dynamic to load it lazily."
+    },
+    {
+      "name": "highlight.js",
+      "sizeKB": 900,
+      "ttImpactMs": 700,
+      "alternatives": [
+        { "name": "prismjs", "sizeKB": 8, "description": "Lightweight syntax highlighter" },
+        { "name": "shiki", "sizeKB": 5, "description": "VS Code-powered syntax highlighting" }
+      ],
+      "reason": "Highlight.js bundles all language grammars. Import only the languages you need."
+    },
+    {
+      "name": "prismjs",
+      "sizeKB": 30,
+      "ttImpactMs": 23,
+      "alternatives": [
+        { "name": "shiki", "sizeKB": 5, "description": "VS Code-powered syntax highlighting" }
+      ],
+      "reason": "Import only the specific Prism language modules you need to reduce bundle size."
+    },
+    {
+      "name": "d3",
+      "sizeKB": 240,
+      "ttImpactMs": 185,
+      "alternatives": [
+        { "name": "recharts", "sizeKB": 60, "description": "React-native charting using D3 internally" }
+      ],
+      "reason": "D3 is very powerful but heavy. Import only specific D3 modules (e.g. d3-scale, d3-array)."
+    },
+    {
+      "name": "rxjs",
+      "sizeKB": 45,
+      "ttImpactMs": 35,
+      "alternatives": [],
+      "reason": "RxJS is designed for Angular. In React/Next.js apps, native Promises and async/await are often sufficient."
+    },
+    {
+      "name": "ramda",
+      "sizeKB": 45,
+      "ttImpactMs": 35,
+      "alternatives": [
+        { "name": "radash", "sizeKB": 3, "description": "Modern functional utility library" }
+      ],
+      "reason": "Ramda is large. Import only specific functions: import { map } from 'ramda/src/map'."
+    },
+    {
+      "name": "faker",
+      "sizeKB": 195,
+      "ttImpactMs": 150,
+      "alternatives": [],
+      "reason": "Faker should be a devDependency only. It should never be in production bundles."
+    },
+    {
+      "name": "@faker-js/faker",
+      "sizeKB": 195,
+      "ttImpactMs": 150,
+      "alternatives": [],
+      "reason": "Faker should be a devDependency only. It should never be in production bundles."
+    },
+    {
+      "name": "underscore",
+      "sizeKB": 16,
+      "ttImpactMs": 12,
+      "alternatives": [
+        { "name": "radash", "sizeKB": 3, "description": "Modern alternative" }
+      ],
+      "reason": "Underscore.js is outdated. Use native JavaScript methods or a modern utility library."
+    },
+    {
+      "name": "immutable",
+      "sizeKB": 56,
+      "ttImpactMs": 43,
+      "alternatives": [
+        { "name": "immer", "sizeKB": 6, "description": "Immutable updates via mutable drafts" }
+      ],
+      "reason": "Immutable.js is heavy. Immer.js provides immutability with a fraction of the bundle size."
+    },
+    {
+      "name": "styled-components",
+      "sizeKB": 35,
+      "ttImpactMs": 27,
+      "alternatives": [
+        { "name": "CSS Modules", "sizeKB": 0, "description": "Built into Next.js, zero runtime" },
+        { "name": "vanilla-extract", "sizeKB": 0, "description": "Zero-runtime CSS-in-JS" }
+      ],
+      "reason": "CSS-in-JS has runtime overhead. For Next.js, CSS Modules or Tailwind are faster."
+    },
+    {
+      "name": "emotion",
+      "sizeKB": 11,
+      "ttImpactMs": 8,
+      "alternatives": [
+        { "name": "CSS Modules", "sizeKB": 0, "description": "Built into Next.js, zero runtime" }
+      ],
+      "reason": "Emotion has a runtime cost. Consider CSS Modules for better performance."
+    },
+    {
+      "name": "@emotion/react",
+      "sizeKB": 11,
+      "ttImpactMs": 8,
+      "alternatives": [
+        { "name": "CSS Modules", "sizeKB": 0, "description": "Built into Next.js, zero runtime" }
+      ],
+      "reason": "Emotion has a runtime cost. Consider CSS Modules for better performance."
+    },
+    {
+      "name": "framer-motion",
+      "sizeKB": 104,
+      "ttImpactMs": 80,
+      "alternatives": [
+        { "name": "auto-animate", "sizeKB": 2, "description": "Zero-config animations" },
+        { "name": "CSS transitions", "sizeKB": 0, "description": "Native CSS for simple animations" }
+      ],
+      "reason": "Framer Motion is large. For simple animations, CSS transitions or auto-animate are much lighter."
+    },
+    {
+      "name": "gsap",
+      "sizeKB": 55,
+      "ttImpactMs": 42,
+      "alternatives": [
+        { "name": "CSS animations", "sizeKB": 0, "description": "Native CSS for most animations" }
+      ],
+      "reason": "GSAP is powerful but heavy. Use native CSS animations for simple effects."
+    },
+    {
+      "name": "quill",
+      "sizeKB": 43,
+      "ttImpactMs": 33,
+      "alternatives": [
+        { "name": "tiptap", "sizeKB": 15, "description": "Modern headless rich text editor" }
+      ],
+      "reason": "Quill is older and larger. Tiptap is a modern, extensible alternative."
+    },
+    {
+      "name": "draft-js",
+      "sizeKB": 90,
+      "ttImpactMs": 70,
+      "alternatives": [
+        { "name": "tiptap", "sizeKB": 15, "description": "Modern headless rich text editor" },
+        { "name": "slate", "sizeKB": 25, "description": "Customizable rich text framework" }
+      ],
+      "reason": "Draft.js is deprecated by Meta. Migrate to Tiptap or Slate."
+    },
+    {
+      "name": "crypto-js",
+      "sizeKB": 43,
+      "ttImpactMs": 33,
+      "alternatives": [
+        { "name": "Web Crypto API", "sizeKB": 0, "description": "Native browser crypto, zero bundle cost" }
+      ],
+      "reason": "Use the native Web Crypto API (crypto.subtle) available in all modern browsers and Node.js 16+."
+    }
+  ]
+}

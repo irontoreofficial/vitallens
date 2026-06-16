@@ -1,0 +1,141 @@
+{
+  "name": "vitallens",
+  "displayName": "VitalLens — SEO & Performance Analyzer",
+  "description": "Real-time SEO & Core Web Vitals linter for Next.js. Inline bundle size, image warnings & redirect loop detection. Like Lighthouse, inside VS Code.",
+  "version": "1.0.2",
+  "publisher": "Irontore",
+  "icon": "resources/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "SEO",
+    "performance",
+    "Next.js",
+    "Core Web Vitals",
+    "bundle analyzer",
+    "Lighthouse",
+    "PageSpeed",
+    "image optimizer",
+    "redirect checker",
+    "web vitals",
+    "LCP",
+    "CLS",
+    "TTI",
+    "bundle size",
+    "nextjs",
+    "react",
+    "webpack",
+    "performance audit",
+    "web performance",
+    "frontend performance"
+  ],
+  "galleryBanner": {
+    "color": "#0D0D1A",
+    "theme": "dark"
+  },
+  "badges": [
+    {
+      "url": "https://img.shields.io/visual-studio-marketplace/v/Irontore.vitallens?color=6C63FF&label=VS%20Code%20Marketplace",
+      "href": "https://marketplace.visualstudio.com/items?itemName=Irontore.vitallens",
+      "description": "VS Code Marketplace"
+    },
+    {
+      "url": "https://img.shields.io/visual-studio-marketplace/d/Irontore.vitallens?color=00D9A5",
+      "href": "https://marketplace.visualstudio.com/items?itemName=Irontore.vitallens",
+      "description": "Downloads"
+    }
+  ],
+  "activationEvents": [
+    "workspaceContains:**/next.config.{js,ts,mjs}",
+    "workspaceContains:**/package.json"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vitallens-sidebar",
+          "title": "VitalLens",
+          "icon": "resources/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "vitallens-sidebar": [
+        {
+          "type": "webview",
+          "id": "vitallens.panel",
+          "name": "SEO & Performance"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "vitallens.analyze",
+        "title": "VitalLens: Run Full Analysis",
+        "icon": "$(search)"
+      },
+      {
+        "command": "vitallens.clearDiagnostics",
+        "title": "VitalLens: Clear All Diagnostics"
+      },
+      {
+        "command": "vitallens.showPanel",
+        "title": "VitalLens: Show Panel"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "vitallens.analyze",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "VitalLens",
+      "properties": {
+        "vitallens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable VitalLens real-time SEO & performance analysis."
+        },
+        "vitallens.imageSizeWarningKB": {
+          "type": "number",
+          "default": 200,
+          "description": "Image file size threshold (KB) to trigger a performance warning."
+        },
+        "vitallens.showCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show bundle weight & TTI impact metrics as CodeLens above package.json lines."
+        },
+        "vitallens.analyzeOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Re-run SEO & performance analysis every time a file is saved."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0"
+  },
+  "dependencies": {}
+}
