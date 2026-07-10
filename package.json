@@ -2,7 +2,7 @@
   "name": "vitallens",
   "displayName": "VitalLens — SEO & Performance Analyzer",
   "description": "Real-time SEO & Core Web Vitals linter for Next.js. Inline bundle size, image warnings & redirect loop detection. Like Lighthouse, inside VS Code.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "Irontore",
   "repository": {
     "type": "git",

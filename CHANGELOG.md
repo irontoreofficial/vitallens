@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.4] — 2026-07-10
+## [1.0.5] — 2026-07-10
 
 ### 🛡️ Badge Fixes
 - Replaced deprecated Shields.io marketplace badges with working Badgen.net badge links in both README and marketplace metadata, resolving the `retired badge` warning.
