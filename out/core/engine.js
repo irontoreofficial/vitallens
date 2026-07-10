@@ -39,6 +39,7 @@ const types_1 = require("./types");
 const imageAnalyzer_1 = require("../analyzers/nextjs/imageAnalyzer");
 const bundleAnalyzer_1 = require("../analyzers/nextjs/bundleAnalyzer");
 const redirectAnalyzer_1 = require("../analyzers/nextjs/redirectAnalyzer");
+const seoAnalyzer_1 = require("../analyzers/seoAnalyzer");
 /**
  * Central analysis engine — orchestrates all analyzers and aggregates results.
  */
@@ -48,6 +49,7 @@ class VitalLensEngine {
         this.imageAnalyzer = new imageAnalyzer_1.ImageAnalyzer(context);
         this.bundleAnalyzer = new bundleAnalyzer_1.BundleAnalyzer(context);
         this.redirectAnalyzer = new redirectAnalyzer_1.RedirectAnalyzer();
+        this.seoAnalyzer = new seoAnalyzer_1.SeoAnalyzer();
     }
     /**
      * Run full analysis on the given document.
@@ -68,6 +70,11 @@ class VitalLensEngine {
         if (this.isJsxOrTemplate(fileName)) {
             const imageIssues = await this.imageAnalyzer.analyze(document);
             issues.push(...imageIssues);
+        }
+        // Run the multi-language SEO rule checks
+        if (this.isSeoSupportedFile(fileName)) {
+            const seoIssues = await this.seoAnalyzer.analyze(document);
+            issues.push(...seoIssues);
         }
         return issues;
     }
@@ -187,6 +194,9 @@ class VitalLensEngine {
     }
     isJsxOrTemplate(fileName) {
         return /\.(tsx|jsx|js|ts|html)$/.test(fileName) && !fileName.includes('node_modules');
+    }
+    isSeoSupportedFile(fileName) {
+        return /\.(tsx|jsx|js|ts|html|vue|css)$/.test(fileName) && !fileName.includes('node_modules');
     }
 }
 exports.VitalLensEngine = VitalLensEngine;

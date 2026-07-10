@@ -33,15 +33,16 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BundleCodeLensProvider = void 0;
+exports.VitalLensCodeLensProvider = void 0;
 const vscode = __importStar(require("vscode"));
 const bundleAnalyzer_1 = require("../analyzers/nextjs/bundleAnalyzer");
 /**
- * Provides inline CodeLens above heavy package entries in package.json.
- * Shows bundle size and TTI impact directly in the editor.
+ * Provides inline CodeLens above package.json dependencies (for bundle weight)
+ * and above code lines containing SEO/PageSpeed issues (for framework audits).
  */
-class BundleCodeLensProvider {
-    constructor(context) {
+class VitalLensCodeLensProvider {
+    constructor(context, issueStore) {
+        this.issueStore = issueStore;
         this._onDidChangeCodeLenses = new vscode.EventEmitter();
         this.onDidChangeCodeLenses = this._onDidChangeCodeLenses.event;
         this.bundleAnalyzer = new bundleAnalyzer_1.BundleAnalyzer(context);
@@ -54,10 +55,44 @@ class BundleCodeLensProvider {
         if (!config.get('showCodeLens', true)) {
             return [];
         }
-        // Only for package.json files
-        if (!document.fileName.endsWith('package.json') || document.fileName.includes('node_modules')) {
-            return [];
+        const codeLenses = [];
+        const fileName = document.fileName.toLowerCase();
+        // ─── 1. Package.json Bundle Weight CodeLenses ───────────────────────────
+        if (fileName.endsWith('package.json') && !fileName.includes('node_modules')) {
+            return this.provideBundleCodeLenses(document, token);
         }
+        // ─── 2. Multi-Language SEO / PageSpeed CodeLenses ───────────────────────
+        const fileIssues = this.issueStore.get(document.uri.toString());
+        if (fileIssues && fileIssues.length > 0) {
+            for (const issue of fileIssues) {
+                if (token.isCancellationRequested) {
+                    break;
+                }
+                // Place CodeLens at the start of the line where the issue was found
+                const line = document.lineAt(issue.range.start.line);
+                const range = line.range;
+                // CodeLens 1: Rationale & Explanations (Click opens info box)
+                const titleText = `⚡ VitalLens: Use '${issue.meta?.goodCode || ''}' instead of '${issue.meta?.badCode || ''}' (Click to see why)`;
+                codeLenses.push(new vscode.CodeLens(range, {
+                    title: titleText,
+                    command: 'vitallens.showSeoDetail',
+                    arguments: [issue],
+                    tooltip: `Why: ${issue.meta?.why || ''}`
+                }));
+                // CodeLens 2: Quick Fix (if edit/fixes are available)
+                if (issue.fixes && issue.fixes.length > 0) {
+                    const fix = issue.fixes[0];
+                    codeLenses.push(new vscode.CodeLens(range, {
+                        title: `💡 Quick Fix: ${fix.label}`,
+                        command: 'vitallens.applySeoFix',
+                        arguments: [document.uri, issue]
+                    }));
+                }
+            }
+        }
+        return codeLenses;
+    }
+    async provideBundleCodeLenses(document, token) {
         const codeLenses = [];
         const rules = this.bundleAnalyzer.getRules();
         const text = document.getText();
@@ -114,5 +149,5 @@ class BundleCodeLensProvider {
         return -1;
     }
 }
-exports.BundleCodeLensProvider = BundleCodeLensProvider;
+exports.VitalLensCodeLensProvider = VitalLensCodeLensProvider;
 //# sourceMappingURL=codeLensProvider.js.map

@@ -9,6 +9,7 @@ import {
 import { ImageAnalyzer } from '../analyzers/nextjs/imageAnalyzer';
 import { BundleAnalyzer } from '../analyzers/nextjs/bundleAnalyzer';
 import { RedirectAnalyzer } from '../analyzers/nextjs/redirectAnalyzer';
+import { SeoAnalyzer } from '../analyzers/seoAnalyzer';
 
 /**
  * Central analysis engine — orchestrates all analyzers and aggregates results.
@@ -17,11 +18,13 @@ export class VitalLensEngine {
   private imageAnalyzer: ImageAnalyzer;
   private bundleAnalyzer: BundleAnalyzer;
   private redirectAnalyzer: RedirectAnalyzer;
+  private seoAnalyzer: SeoAnalyzer;
 
   constructor(private readonly context: vscode.ExtensionContext) {
     this.imageAnalyzer = new ImageAnalyzer(context);
     this.bundleAnalyzer = new BundleAnalyzer(context);
     this.redirectAnalyzer = new RedirectAnalyzer();
+    this.seoAnalyzer = new SeoAnalyzer();
   }
 
   /**
@@ -46,6 +49,12 @@ export class VitalLensEngine {
     if (this.isJsxOrTemplate(fileName)) {
       const imageIssues = await this.imageAnalyzer.analyze(document);
       issues.push(...imageIssues);
+    }
+
+    // Run the multi-language SEO rule checks
+    if (this.isSeoSupportedFile(fileName)) {
+      const seoIssues = await this.seoAnalyzer.analyze(document);
+      issues.push(...seoIssues);
     }
 
     return issues;
@@ -185,5 +194,9 @@ export class VitalLensEngine {
 
   private isJsxOrTemplate(fileName: string): boolean {
     return /\.(tsx|jsx|js|ts|html)$/.test(fileName) && !fileName.includes('node_modules');
+  }
+
+  private isSeoSupportedFile(fileName: string): boolean {
+    return /\.(tsx|jsx|js|ts|html|vue|css)$/.test(fileName) && !fileName.includes('node_modules');
   }
 }

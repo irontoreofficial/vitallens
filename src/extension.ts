@@ -2,17 +2,26 @@ import * as vscode from 'vscode';
 import { VitalLensEngine } from './core/engine';
 import { DiagnosticsManager } from './core/diagnostics';
 import { VitalLensPanel } from './webview/panel';
-import { BundleCodeLensProvider } from './providers/codeLensProvider';
+import { VitalLensCodeLensProvider } from './providers/codeLensProvider';
 import { VitalLensCodeActionProvider } from './providers/codeActionProvider';
 import { VitalIssue } from './core/types';
 
 let diagnosticsManager: DiagnosticsManager;
 let engine: VitalLensEngine;
 let panel: VitalLensPanel;
-let codeLensProvider: BundleCodeLensProvider;
+let codeLensProvider: VitalLensCodeLensProvider;
 
 const issueStore = new Map<string, VitalIssue[]>();
 let debounceTimer: NodeJS.Timeout | undefined;
+
+const isSupportedFile = (fileName: string): boolean => {
+  const lower = fileName.toLowerCase();
+  return (
+    lower.endsWith('package.json') ||
+    /next\.config\.(js|ts|mjs)$/.test(lower) ||
+    /\.(tsx|jsx|js|ts|html|vue|css)$/.test(lower)
+  ) && !lower.includes('node_modules');
+};
 
 export function activate(context: vscode.ExtensionContext): void {
   console.log('[VitalLens] Extension activating...');
@@ -21,7 +30,7 @@ export function activate(context: vscode.ExtensionContext): void {
   diagnosticsManager = new DiagnosticsManager();
   engine = new VitalLensEngine(context);
   panel = new VitalLensPanel(context.extensionUri);
-  codeLensProvider = new BundleCodeLensProvider(context);
+  codeLensProvider = new VitalLensCodeLensProvider(context, issueStore);
 
   // ── Register Sidebar Panel ────────────────────────────────
   context.subscriptions.push(
@@ -30,10 +39,19 @@ export function activate(context: vscode.ExtensionContext): void {
     })
   );
 
-  // ── Register CodeLens Provider (package.json) ─────────────
+  // ── Register CodeLens Provider ────────────────────────────
   context.subscriptions.push(
     vscode.languages.registerCodeLensProvider(
-      { language: 'json', pattern: '**/package.json' },
+      [
+        { language: 'json', pattern: '**/package.json' },
+        { language: 'javascript' },
+        { language: 'typescript' },
+        { language: 'javascriptreact' },
+        { language: 'typescriptreact' },
+        { language: 'html' },
+        { language: 'vue' },
+        { language: 'css' }
+      ],
       codeLensProvider
     )
   );
@@ -49,6 +67,8 @@ export function activate(context: vscode.ExtensionContext): void {
         { language: 'javascriptreact' },
         { language: 'typescriptreact' },
         { language: 'html' },
+        { language: 'vue' },
+        { language: 'css' }
       ],
       codeActionProvider,
       { providedCodeActionKinds: VitalLensCodeActionProvider.providedCodeActionKinds }
@@ -64,7 +84,9 @@ export function activate(context: vscode.ExtensionContext): void {
       try {
         const result = await engine.analyzeWorkspace();
         diagnosticsManager.updateAll(result.issues);
-        // Update code action issue store
+        
+        // Clear and rebuild issueStore to prevent stale issues
+        issueStore.clear();
         for (const issue of result.issues) {
           const key = issue.fileUri.toString();
           if (!issueStore.has(key)) {
@@ -72,6 +94,7 @@ export function activate(context: vscode.ExtensionContext): void {
           }
           issueStore.get(key)!.push(issue);
         }
+        
         panel.updateWithResult(result);
         codeLensProvider.refresh();
       } catch (err) {
@@ -129,9 +152,39 @@ export function activate(context: vscode.ExtensionContext): void {
     )
   );
 
+  // Show SEO detail modal explaining recommendations (called from CodeLens click)
+  context.subscriptions.push(
+    vscode.commands.registerCommand('vitallens.showSeoDetail', (issue: VitalIssue) => {
+      vscode.window.showInformationMessage(
+        `⚡ VitalLens SEO Audit: [${issue.title}]\n\n` +
+        `➡️ Şunun yerine: ${issue.meta?.badCode || ''}\n` +
+        `👉 Şunu kullanın: ${issue.meta?.goodCode || ''}\n\n` +
+        `💡 Neden?: ${issue.meta?.why || ''}`,
+        { modal: true }
+      );
+    })
+  );
+
+  // Apply Quick Fix from CodeLens
+  context.subscriptions.push(
+    vscode.commands.registerCommand('vitallens.applySeoFix', async (uri: vscode.Uri, issue: VitalIssue) => {
+      if (issue.fixes && issue.fixes.length > 0) {
+        const fix = issue.fixes[0];
+        if (fix.edit) {
+          await vscode.workspace.applyEdit(fix.edit);
+          vscode.window.showInformationMessage(`[VitalLens] SEO Düzeltmesi uygulandı!`);
+        }
+      }
+    })
+  );
+
   // ── File Watchers (Analyze on Save) ───────────────────────
   context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument(async (document) => {
+      if (!isSupportedFile(document.fileName)) {
+        return;
+      }
+      
       const config = vscode.workspace.getConfiguration('vitallens');
       if (!config.get('analyzeOnSave', true)) {
         return;
@@ -157,13 +210,7 @@ export function activate(context: vscode.ExtensionContext): void {
   // Also analyze when a relevant document is first opened
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument(async (document) => {
-      const fileName = document.fileName.toLowerCase();
-      if (
-        (fileName.endsWith('package.json') ||
-          /next\.config\.(js|ts|mjs)$/.test(fileName) ||
-          /\.(tsx|jsx)$/.test(fileName)) &&
-        !fileName.includes('node_modules')
-      ) {
+      if (isSupportedFile(document.fileName)) {
         const issues = await engine.analyzeDocument(document);
         diagnosticsManager.update(document.uri, issues);
         issueStore.set(document.uri.toString(), issues);

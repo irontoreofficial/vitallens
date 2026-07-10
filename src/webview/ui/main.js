@@ -26,6 +26,14 @@
   const badgeWarn    = document.getElementById('badgeWarn');
   const badgeInfo    = document.getElementById('badgeInfo');
   const frameworkBadge = document.getElementById('frameworkBadge');
+  
+  // Vitals Predictor DOM Refs
+  const statusLcp    = document.getElementById('statusLcp');
+  const statusCls    = document.getElementById('statusCls');
+  const statusInp    = document.getElementById('statusInp');
+  const cardLcp      = document.getElementById('cardLcp');
+  const cardCls      = document.getElementById('cardCls');
+  const cardInp      = document.getElementById('cardInp');
 
   const RING_CIRCUMFERENCE = 326.73; // 2 * π * 52
 
@@ -74,18 +82,23 @@
     setCategoryScore(barRedirect, numRedirect, data.categoryScores.redirect);
     setCategoryScore(barSeo, numSeo, data.categoryScores.seo);
 
+    // Core Web Vitals predictions
+    updateVitalCard(cardLcp, statusLcp, data.lcpStatus);
+    updateVitalCard(cardCls, statusCls, data.clsStatus);
+    updateVitalCard(cardInp, statusInp, data.inpStatus);
+
     // Summary badges
     summaryBadges.style.display = 'flex';
-    badgeError.textContent = `${data.counts.errors} Error${data.counts.errors !== 1 ? 's' : ''}`;
-    badgeWarn.textContent  = `${data.counts.warnings} Warning${data.counts.warnings !== 1 ? 's' : ''}`;
-    badgeInfo.textContent  = `${data.counts.info} Info`;
+    badgeError.textContent = `${data.counts.errors} Hata`;
+    badgeWarn.textContent  = `${data.counts.warnings} Uyarı`;
+    badgeInfo.textContent  = `${data.counts.info} Bilgi`;
 
     // Issues list
     const groups = [
-      { key: 'bundle',   label: '📦 Bundle',    emoji: '📦', issues: data.bundleIssues   },
-      { key: 'image',    label: '🖼️ Images',    emoji: '🖼️', issues: data.imageIssues    },
-      { key: 'redirect', label: '🔄 Redirects', emoji: '🔄', issues: data.redirectIssues },
-      { key: 'seo',      label: '🎯 SEO',       emoji: '🎯', issues: data.seoIssues      },
+      { key: 'seo',      label: '🎯 Arama Motoru (SEO)', emoji: '🎯', issues: data.seoIssues      },
+      { key: 'image',    label: '🖼️ Görsel Performansı', emoji: '🖼️', issues: data.imageIssues    },
+      { key: 'bundle',   label: '📦 Paket Ağırlığı',     emoji: '📦', issues: data.bundleIssues   },
+      { key: 'redirect', label: '🔄 Yönlendirmeler',     emoji: '🔄', issues: data.redirectIssues },
     ];
 
     const totalIssues = groups.reduce((sum, g) => sum + g.issues.length, 0);
@@ -98,8 +111,8 @@
       issuesList.innerHTML = `
         <div class="no-issues">
           <div class="check-icon">✅</div>
-          <h3>All clear!</h3>
-          <p>No performance or SEO issues detected in the analyzed files.</p>
+          <h3>Her şey harika!</h3>
+          <p>Dosyalarınızda SEO veya performans engelleyici bir hataya rastlanmadı.</p>
         </div>`;
     } else {
       for (const group of groups) {
@@ -109,7 +122,30 @@
     }
 
     // Footer
-    footer.textContent = `Last analyzed: ${data.analyzedAt}`;
+    footer.textContent = `Son Analiz: ${data.analyzedAt}`;
+  }
+
+  function updateVitalCard(cardEl, statusEl, status) {
+    statusEl.textContent = trStatus(status);
+    cardEl.className = 'vital-card ' + statusColorClass(status);
+  }
+
+  function trStatus(status) {
+    switch (status) {
+      case 'Good': return 'İyi';
+      case 'Needs Improvement': return 'Düzeltilmeli';
+      case 'Poor': return 'Kötü';
+      default: return 'Bilinmiyor';
+    }
+  }
+
+  function statusColorClass(status) {
+    switch (status) {
+      case 'Good': return 'status-good';
+      case 'Needs Improvement': return 'status-needs-imp';
+      case 'Poor': return 'status-poor';
+      default: return '';
+    }
   }
 
   function buildGroup({ key, label, issues }) {
