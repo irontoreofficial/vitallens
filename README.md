@@ -2,9 +2,9 @@
 
 > **The only VS Code extension that brings Lighthouse-style SEO and PageSpeed Insights audits directly into your editor.** Get real-time predictions of your Web Vitals and Semrush ranking scores for **Angular, React, Vue, Next.js, HTML, CSS, and JavaScript** while you write code.
 
-[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/Irontore.vitallens?color=6C63FF&label=VS%20Code%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=Irontore.vitallens)
-[![Downloads](https://img.shields.io/visual-studio-marketplace/d/Irontore.vitallens?color=00D9A5)](https://marketplace.visualstudio.com/items?itemName=Irontore.vitallens)
-[![Rating](https://img.shields.io/visual-studio-marketplace/r/Irontore.vitallens?color=FFD93D)](https://marketplace.visualstudio.com/items?itemName=Irontore.vitallens)
+[![VS Code Marketplace](https://badgen.net/vs-marketplace/v/Irontore.vitallens?color=6c63ff)](https://marketplace.visualstudio.com/items?itemName=Irontore.vitallens)
+[![Downloads](https://badgen.net/vs-marketplace/d/Irontore.vitallens?color=00d9a5)](https://marketplace.visualstudio.com/items?itemName=Irontore.vitallens)
+[![Rating](https://badgen.net/vs-marketplace/r/Irontore.vitallens?color=ffd93d)](https://marketplace.visualstudio.com/items?itemName=Irontore.vitallens)
 
 ---
 
